@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Logo from "@/components/main/logo/tjp.png";
+import Logo from "@/components/Main/logo/tjp.png";
 import Input from "@/components/Form/Input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
