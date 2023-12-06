@@ -1,0 +1,43 @@
+// Reference : 
+// 1. https://betterprogramming.pub/the-native-way-to-configure-path-aliases-in-frontend-projects-5db70f19a6e0
+// 2. https://www.totaltypescript.com/tsconfig-cheat-sheet
+// -- https://devblogs.microsoft.com/typescript/announcing-typescript-5-0/#moduleresolution-bundler
+// -- https://www.effect.website/docs/essentials/importing 
+
+{
+  "compilerOptions": {
+    /* Base Options: */
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "es2022",
+    "verbatimModuleSyntax": true,
+    "allowJs": true, // allow js and jsx inside typescript project
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    
+    /* Strictness */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+
+     /* If NOT transpiling with TypeScript: */
+     "moduleResolution": "Bundler", 
+     "module": "ESNext", 
+     "noEmit": true,
+     "jsx": "react-jsx",
+     
+     // > Tells TypeScript how to resolve modules - Bundler is the best option for if the code you're writing is meant to be bundled with a tool like Webpack, Rollup, Babel, SWC, or ESBuild.
+     // > Tells TypeScript what module syntax to use. - ESNext is the best option because it most closely mimics how bundlers treat modules.
+ 
+     /* If your code runs in the DOM: */
+     "lib": ["ES2022", "DOM", "DOM.Iterable"],
+
+     /* Shadcn */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+   
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }],
+}
