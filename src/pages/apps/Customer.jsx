@@ -103,7 +103,7 @@ async function addKonsumen(nama_konsumen, alamat) {
 // HEADER + POPUP TAMBAH
 const HeaderPageAndAddProduct = ({ data, namaHalaman, desc }) => {
   return (
-    <div className="sm:flex sm:items-center sm:justify-between mt-12">
+    <div className="sm:flex sm:items-center mx-5 md:mx-0 sm:justify-between mt-12">
       <div>
         <div className="flex items-center gap-x-3">
           <h2 className="text-lg font-medium text-gray-800 dark:text-white capitalize">
@@ -333,7 +333,7 @@ function Customer() {
             namaHalaman="Konsumen"
             desc="Berikut adalah daftar Konsumen ."
           />
-          <div className="mt-6 flex justify-between items-center">
+          <div className="mt-6 flex justify-between items-center text-sm">
             <SearchAndFiltering
               searching={searching}
               setSearching={handleSearchChange}
@@ -344,7 +344,7 @@ function Customer() {
               className="py-5"
               onClick={handleRefresh}
             >
-              <div className="flex space-x-3">
+              <div className="flex md:space-x-3">
                 <motion.div
                   animate={{ rotate: isRefreshing ? 360 : 0 }}
                   transition={{
@@ -354,7 +354,7 @@ function Customer() {
                 >
                   <RefreshCw className="w-4" />
                 </motion.div>
-                <p>Refresh Tabel</p>
+                <p className="text-sm">Refresh Tabel</p>
               </div>
             </Button>
           </div>

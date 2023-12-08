@@ -205,7 +205,7 @@ const SetorProduk = () => {
 
   return (
     <Layout>
-      <div className="container max-w-5xl mx-auto py-12">
+      <div className="max-w-5xl md:mx-auto py-12 mx-5 ">
         <h1 className="text-2xl font-semibold mb-12">
           Tambah Transaksi Penjualan
         </h1>

@@ -12,7 +12,7 @@ function Footer() {
     <footer className="text-sm py-6 bg-[#e6e5df]">
       <div className="max-w-5xl mx-auto space-y-3">
         <img src={Logo} alt="logo" className="max-w-[135px]" />
-        <div className="w-1/3">
+        <div className="md:w-1/3 mx-5">
           <p className="font-semibold ">Alamat Perusahaan :</p>
           <p className="text-xs">
             Sukajadi, Kecamatan Talang Kelapa, Kabupaten Banyuasin,

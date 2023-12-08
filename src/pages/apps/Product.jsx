@@ -146,7 +146,7 @@ async function addBarang(kodebarang, nama_barang, stok_barang, harga_jual) {
 // HEADER + POPUP SETOR / TAMBAH
 const HeaderPageAndAddProduct = ({ data, namaHalaman, desc, vendor }) => {
   return (
-    <div className="sm:flex sm:items-center sm:justify-between mt-12">
+    <div className="sm:flex sm:items-center mx-5 md:mx-0 sm:justify-between mt-12">
       <div>
         <div className="flex items-center gap-x-3">
           <h2 className="text-lg font-medium text-gray-800 dark:text-white capitalize">
@@ -162,14 +162,13 @@ const HeaderPageAndAddProduct = ({ data, namaHalaman, desc, vendor }) => {
       </div>
 
       <div className="flex items-center mt-4 gap-x-3">
-        <Link to={"/setor-barang"}>
-          {" "}
-          <button className="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide blue-500 transition-colors duration-200 border-2 border-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
+        <button className="w-1/2 px-5 py-2 text-sm tracking-wide blue-500 transition-colors duration-200 border-2 border-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
+          <Link to={"/setor-barang"} className="flex justify-center ">
             <ListPlus />
 
             <span>Setor Barang</span>
-          </button>
-        </Link>
+          </Link>
+        </button>
         <PopUpAddProduct namaHalaman={namaHalaman} />
       </div>
     </div>

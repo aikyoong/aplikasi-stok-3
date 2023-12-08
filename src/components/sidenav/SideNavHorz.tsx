@@ -49,7 +49,7 @@ function SideNavHorz() {
   ];
 
   return (
-    <div className="bg-[#164b1a] text-white">
+    <div className="bg-[#164b1a] text-white overflow-x-auto">
       <div className="flex justify-start max-w-5xl mx-auto py-1 ">
         <ul className="space-y-1  flex items-center space-x-4">
           {menuItems.map(({ key, label, icon, to }) => {

@@ -23,33 +23,29 @@ function Header() {
   };
 
   return (
-    <header className="text-sm py-2 bg-[#e6e5df]">
-      <div className="flex justify-between max-w-5xl mx-auto items-center">
+    <header className="text-sm py-2 bg-[#dfdcd0]">
+      <div className="flex justify-between mr-5 max-w-5xl md:mx-auto items-center">
         <Link to="/">
           <img src={Logo} alt="logo" className="max-w-[185px]" />
         </Link>
-        <p className="text-2xl font-philoshoper">
+
+        <p className="text-2xl font-philoshoper hidden md:block">
           General Trading Company & Distribution Plastic
         </p>
         <NavigationMenus />
 
-        <div className="flex space-x-6">
+        <div className="flex space-x-6 ">
           {/* <button className="text-[#EDC997]">Register</button> */}
           {isLoggedIn === true ? (
             <button
-              className="text-center px-6 py-2 border transition-all duration-300  border-[#EDC997] hover:bg-white hover:text-[#1F2732] rounded-md  font-medium"
+              className="text-center px-6 py-2  transition-all duration-300  border-2 border-[#805b29] hover:bg-white hover:text-[#1F2732] rounded-md  font-medium"
               onClick={handleLogout}
             >
               Keluar
             </button>
           ) : (
-            // <Link to="/masuk">
-            //   <button className="text-center px-6 py-2 border transition-all duration-300 bg-orange-600 text-white   rounded-md  font-medium">
-            //     Masuk
-            //   </button>
-            // </Link>
             <button
-              className="text-center px-6 py-2 border transition-all duration-300 bg-orange-600 text-white   rounded-md  font-medium"
+              className="text-center  px-6 py-2 border transition-all duration-300 bg-orange-600 text-white   rounded-md  font-medium"
               onClick={handleLogout}
             >
               Keluar

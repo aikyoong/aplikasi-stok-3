@@ -3,7 +3,7 @@ import React from "react";
 const SearchAndFiltering = ({ searching, setSearching, placeholder }) => {
   return (
     <div className=" md:flex md:items-center md:justify-between">
-      <div className="relative flex items-center mt-4 md:mt-0">
+      <div className="relative flex items-center  md:mt-0">
         <span className="absolute">
           <svg
             xmlns="http://www.w3.org/2000/svg"

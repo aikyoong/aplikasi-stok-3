@@ -109,7 +109,7 @@ async function addVendor(nama_vendor, alamat) {
 // HEADER + POPUP TAMBAH
 const HeaderPageAndAddProduct = ({ data, namaHalaman, desc, vendor }) => {
   return (
-    <div className="sm:flex sm:items-center sm:justify-between mt-12">
+    <div className="sm:flex sm:items-center mx-5 md:mx-0 sm:justify-between mt-12">
       <div>
         <div className="flex items-center gap-x-3">
           <h2 className="text-lg font-medium text-gray-800 dark:text-white capitalize">
