@@ -94,7 +94,7 @@ function LoginPage() {
         containerStyle={{}}
         toastOptions={{
           // Define default options
-          className: "",
+
           duration: 1450,
           style: {
             background: "#ffff",
@@ -111,7 +111,7 @@ function LoginPage() {
               <h1 className="text-xl font-bold  leading-tight tracking-tight  text-gray-900 md:text-3xl dark:text-white">
                 Selamat Datang
               </h1>
-              <span className="text-sm  text-gray-800 text-center">
+              <span className="text-sm text-gray-800 text-center">
                 Masuk untuk melanjutkan
               </span>
               <FormProvider {...methods}>
