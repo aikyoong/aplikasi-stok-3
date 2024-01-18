@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useForm, FormProvider } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import supabase from "@/config/supabaseClient";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import useAuth from "@/store/useAuth";
@@ -46,26 +46,18 @@ function LoginPage() {
     resolver: zodResolver(ValidationSchemaLogin),
     // defaultValues: { rememberCheck: false },
   });
-
   const { handleSubmit, formState } = methods;
   const { errors } = formState;
 
   const navigate = useNavigate();
-  // console.log("ini lication dari useNavigate", location);
 
-  const Success = () => {
-    toast.success("Your order has been confirmed");
-  };
+  const { isLoggedIn, authUser, login } = useAuth();
 
-  const { isLoggedIn, authUser, login, logout } = useAuth();
-
-  console.log("Isi Auth", authUser ?? "Belum login");
-
-  if (isLoggedIn === true) {
-    setTimeout(() => {
+  useEffect(() => {
+    if (isLoggedIn === true) {
       navigate("/produk");
-    }, 1950);
-  }
+    }
+  }, [isLoggedIn]);
 
   const onSubmit = async (data) => {
     console.log("yang disubmit", data);

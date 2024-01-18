@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import React from "react"; // Import React
+import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect } from "react"; // Import React
 import Logo from "./logo/tjp.png";
 import {
   NavigationMenu,
@@ -13,10 +13,17 @@ import {
 import { cn } from "@/lib/utils";
 import useAuth from "@/store/useAuth";
 
-import SideNavHorz from "../sidenav/SideNavHorz";
-
 function Header() {
-  const { isLoggedIn, login, logout } = useAuth();
+  const navigate = useNavigate();
+  const { isLoggedIn, logout } = useAuth();
+
+  useEffect(() => {
+    if (isLoggedIn === false) {
+      setTimeout(() => {
+        navigate("/");
+      }, 1900);
+    }
+  }, [isLoggedIn]);
 
   const handleLogout = () => {
     logout();
@@ -35,22 +42,12 @@ function Header() {
         <NavigationMenus />
 
         <div className="flex space-x-6 ">
-          {/* <button className="text-[#EDC997]">Register</button> */}
-          {isLoggedIn === true ? (
-            <button
-              className="text-center px-6 py-2  transition-all duration-300  border-2 border-[#805b29] hover:bg-white hover:text-[#1F2732] rounded-md  font-medium"
-              onClick={handleLogout}
-            >
-              Keluar
-            </button>
-          ) : (
-            <button
-              className="text-center  px-6 py-2 border transition-all duration-300 bg-orange-600 text-white   rounded-md  font-medium"
-              onClick={handleLogout}
-            >
-              Keluar
-            </button>
-          )}
+          <button
+            className="text-center px-6 py-2  transition-all duration-300  border-2 border-[#805b29] hover:bg-white hover:text-[#1F2732] rounded-md  font-medium"
+            onClick={handleLogout}
+          >
+            Keluar
+          </button>
         </div>
       </div>
     </header>

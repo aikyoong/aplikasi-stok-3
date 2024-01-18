@@ -37,13 +37,13 @@ import toast from "react-hot-toast";
 import supabase from "@/config/supabaseClient";
 import { useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import useAuth from "@/store/useAuth";
+
 import { RefreshCw, ListPlus } from "lucide-react";
 import { motion } from "framer-motion";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import * as z from "zod";
 
@@ -63,23 +63,6 @@ const formAddSchema = z.object({
   harga_barang: z.string().regex(/^(0|[1-9][0-9]*)$/, {
     message:
       "Harga Barang tidak boleh memiliki angka 0 di depan kecuali nilai 0 itu sendiri.",
-  }),
-});
-
-const formSetorSchema = z.object({
-  kode_barang: z.string().nonempty({
-    message: "Kode barang tidak boleh kosong.",
-  }),
-  idvendor: z.number(),
-  jumlah: z.string().regex(/^[1-9][0-9]*$/, {
-    message:
-      "Jumlah Barang Dibeli harus berupa angka positif dan tidak boleh dimulai dengan angka 0.",
-  }),
-  totalharga: z.string().min(0, {
-    message: "Total harga tidak boleh negatif.",
-  }),
-  tanggal_pembelian: z.string().nonempty({
-    message: "Tanggal pembelian tidak boleh kosong.",
   }),
 });
 
@@ -154,7 +137,7 @@ const HeaderPageAndAddProduct = ({ data, namaHalaman, desc, vendor }) => {
           </h2>
 
           <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">
-            {data.length} produk
+            {data?.length} produk dari {vendor?.length} vendor
           </span>
         </div>
 
