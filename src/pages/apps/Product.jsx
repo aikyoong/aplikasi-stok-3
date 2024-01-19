@@ -41,7 +41,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { RefreshCw, ListPlus } from "lucide-react";
 import { motion } from "framer-motion";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import { Link } from "react-router-dom";
 
@@ -296,15 +296,6 @@ function PopUpAddProduct({ namaHalaman, fungsi }) {
 
 // KOMPONEN + PAGE
 function Produk() {
-  // const navigate = useNavigate();
-
-  // const { isLoggedIn } = useAuth();
-  // if (isLoggedIn === false) {
-  //   setTimeout(() => {
-  //     navigate("/");
-  //   }, 1200);
-  // }
-
   // Fetching
   const { data: masterBarang, error: fetchError } = useQuery({
     queryKey: ["master_barang"],

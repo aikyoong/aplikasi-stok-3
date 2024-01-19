@@ -24,7 +24,7 @@ function Layout({ children }: { children: ReactNode }) {
         toastOptions={{
           // Define default options
           className: "",
-          duration: 1250,
+          duration: 2250,
           style: {
             background: "#ffff",
             color: "#4171ED",

@@ -206,9 +206,7 @@ const SetorProduk = () => {
   return (
     <Layout>
       <div className="max-w-5xl md:mx-auto py-12 mx-5 ">
-        <h1 className="text-2xl font-semibold mb-12">
-          Tambah Transaksi Penjualan
-        </h1>
+        <h1 className="text-2xl font-semibold mb-12">Tambah Stok Barang</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-6">

@@ -43,11 +43,7 @@ const router = createBrowserRouter([
     loader: authLoader,
     element: <Customer />,
   },
-  {
-    path: "/penjualan",
-    loader: authLoader,
-    element: <Sales />,
-  },
+
   {
     path: "/tim",
     loader: authLoader,
@@ -57,6 +53,11 @@ const router = createBrowserRouter([
     path: "/setor-barang",
     loader: authLoader,
     element: <SetorProduk />,
+  },
+  {
+    path: "/penjualan",
+    loader: authLoader,
+    element: <Sales />,
   },
   {
     path: "/tambah-penjualan",

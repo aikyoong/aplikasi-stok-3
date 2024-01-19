@@ -40,7 +40,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { RefreshCw, ListPlus } from "lucide-react";
 import { motion } from "framer-motion";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 // SCHEMA VALIDATION
@@ -52,6 +52,7 @@ const formAddSchema = z.object({
     message: "Nama Barang harus lebih dari 5 karakter.",
   }),
 });
+
 // FUNCTIONS
 const fetchKonsumen = async () => {
   const { data, error } = await supabase.from("konsumen").select("*");
