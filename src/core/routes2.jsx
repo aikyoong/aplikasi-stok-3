@@ -5,10 +5,12 @@ import Produk from "@/pages/apps/Product";
 import SetorProduk from "@/pages/apps/PageSetorProduk";
 import Vendor from "@/pages/apps/Vendor";
 import Customer from "@/pages/apps/Customer";
-import Sales from "@/pages/apps/Sales";
+// import Penjualan from "@/pages/apps/Penjualan";
 import Team from "@/pages/apps/Team";
-import TransactionForm from "@/pages/apps/PageTambahPenjualan";
+import TambahPenjualan from "@/pages/apps/PageTambahPenjualan";
 import PagePenjualanDetail from "@/pages/apps/PagePenjualanDetail";
+import Test from "./Test";
+import Penjualan from "@/pages/apps/Penjualan2";
 
 import { authLoader } from "@/utils/loader";
 
@@ -54,15 +56,20 @@ const router = createBrowserRouter([
     loader: authLoader,
     element: <SetorProduk />,
   },
+  // {
+  //   path: "/penjualan",
+  //   loader: authLoader,
+  //   element: <Penjualan />,
+  // },
   {
-    path: "/penjualan",
+    path: "/transaksi-penjualan",
     loader: authLoader,
-    element: <Sales />,
+    element: <Penjualan />,
   },
   {
     path: "/tambah-penjualan",
     loader: authLoader,
-    element: <TransactionForm />,
+    element: <TambahPenjualan />,
   },
   {
     path: "/penjualan/:idtransaksi",

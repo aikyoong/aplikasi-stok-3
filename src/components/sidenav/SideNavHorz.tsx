@@ -37,7 +37,7 @@ function SideNavHorz() {
       key: "penjualan",
       label: "Penjualan",
       icon: <PercentCircle />,
-      to: "/penjualan",
+      to: "/transaksi-penjualan",
     },
 
     {

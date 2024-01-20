@@ -74,49 +74,75 @@ async function addTransaksi(
     .insert([
       { idkonsumen, tanggaltransaksi, totalitem, totalharga, statuspembayaran },
     ])
-    .select();
+    .single();
+  // .select();
   // .returning("idtransaksi"); // Mengambil nilai id dari baris yang baru saja ditambahkan
 
   console.log("Response from Supabase:", data, error, status);
 
   if (error) {
     console.error("Error adding data:", error);
-    return null; // Kembalikan null jika ada error
+    toast.error(`Maaf ada kesalahan ketika menambahkan transaksi`);
+    return null;
   }
 
   if (status === 201) {
     toast.success(`Berhasil menambahkan transaksi`);
-    console.log("idtransaksi:", data[0].idtransaksi); // Menampilkan idtransaksi dari baris yang baru saja ditambahkan
-    return data[0].idtransaksi; // Mengembalikan idtransaksi dari baris data yang ditambahkan
   } else {
-    toast.error(`Maaf ada kesalahan ketika menambahkan transaksi`);
-    return null; // Kembalikan null jika ada error
+    toast.error(`Gagal menambahkan transaksi`);
   }
+
+  return data.idtransaksi; // Mengembalikan idtransaksi dari transaksi yang baru ditambahkan
 }
 
-async function addItemTransaksi(array) {
-  const { data, error, status } = await supabase
-    .from("detailpenjualan")
-    .insert(array)
-    .select();
-  // .returning("idtransaksi"); // Mengambil nilai id dari baris yang baru saja ditambahkan
+// LAMA
+// async function addItemTransaksi(array) {
+//   const { data, error, status } = await supabase
+//     .from("detailpenjualan")
+//     .insert(array)
+//     .select();
+//   // .returning("idtransaksi"); // Mengambil nilai id dari baris yang baru saja ditambahkan
 
-  console.log("Response from Supabase:", data, error, status);
+//   console.log("Response from Supabase:", data, error, status);
+
+//   if (error) {
+//     console.error("Error adding data:", error);
+//     return null; // Kembalikan null jika ada error
+//   }
+
+//   if (status === 201) {
+//     toast.success(`Berhasil menambahkan item kedalam transaksi`);
+//   } else {
+//     toast.error(`Maaf ada kesalahan ketika menambahkan item transaksi`);
+//     return null; // Kembalikan null jika ada error
+//   }
+// }
+
+async function addItemTransaksi(idtransaksi, items) {
+  const itemsToInsert = items.map((item) => ({
+    idtransaksi,
+    kodebarang: item.kodebarang,
+    jumlah_barang: item.quantity,
+    harga_per_item: item.unitPrice,
+    // tambahkan kolum tambahan jika ada
+  }));
+
+  const { data, error } = await supabase
+    .from("penjualan_produk")
+    .insert(itemsToInsert);
 
   if (error) {
-    console.error("Error adding data:", error);
-    return null; // Kembalikan null jika ada error
+    console.error("Error adding items:", error);
+    toast.error(`Maaf ada kesalahan ketika menambahkan item transaksi`);
+    return false;
   }
 
-  if (status === 201) {
-    toast.success(`Berhasil menambahkan item kedalam transaksi`);
-  } else {
-    toast.error(`Maaf ada kesalahan ketika menambahkan item transaksi`);
-    return null; // Kembalikan null jika ada error
-  }
+  // toast.success(`Berhasil menambahkan item kedalam transaksi`);
+  console.log("Item added:", data);
+  return data;
 }
 
-const TransactionForm = () => {
+const TambahPenjualan = () => {
   const form = useForm({
     defaultValues: {
       statuspembayaran: "",
@@ -187,18 +213,37 @@ const TransactionForm = () => {
       totalBarang,
       totalHarga,
       statuspembayaran
-    ).then((idtransaksi) => {
+    ).then(async (idtransaksi) => {
       if (idtransaksi) {
-        const detailItems = items.map((item) => ({
-          idtransaksipenjualan: idtransaksi,
-          kodebarang: item.productName,
-          jumlah: item.quantity,
-          hargasatuan: item.unitPrice,
+        // const detailItems = items.map((item) => ({
+        //   idtransaksipenjualan: idtransaksi,
+        //   kodebarang: item.productName,
+        //   jumlah: item.quantity,
+        //   hargasatuan: item.unitPrice,
+        // }));
+
+        // Ubah struktur items untuk sesuai dengan tabel penjualan_produk
+        const itemsFormatted = values.items.map((item) => ({
+          kodebarang: item.kodebarang, // Pastikan ini adalah kode barang
+          jumlah_barang: item.quantity,
+          harga_per_item: item.unitPrice,
         }));
 
-        console.log("Transaksi ID:", idtransaksi);
-        addItemTransaksi(detailItems);
-        // Anda bisa melakukan tindakan lain dengan idtransaksi di sini
+        // console.log("Transaksi ID:", idtransaksi);
+        // addItemTransaksi(detailItems);
+
+        // Tunggu sampai semua item transaksi berhasil ditambahkan
+        const success = await addItemTransaksi(idtransaksi, itemsFormatted);
+        if (success) {
+          toast.success(`Transaksi dan detail produk berhasil ditambahkan.`);
+          // Lakukan tindakan selanjutnya, seperti reset form atau redirect
+        } else {
+          toast.error(`Gagal menambahkan detail produk ke transaksi.`);
+          // Lakukan tindakan untuk menangani error
+        }
+      } else {
+        toast.error(`Gagal membuat transaksi.`);
+        // Lakukan tindakan untuk menangani error
       }
     });
   }
@@ -213,6 +258,8 @@ const TransactionForm = () => {
     queryFn: fetchMasterBarang,
   });
 
+  console.log("dataProduk", dataProduk);
+
   const konsumenOption = konsumenData?.map((konsumen) => ({
     value: konsumen.idkonsumen,
     label: konsumen.nama_konsumen,
@@ -223,10 +270,10 @@ const TransactionForm = () => {
     label: product.nama_barang,
   }));
 
-  const statusPembayaranOptions = [
-    { value: "lunas", label: "Lunas" },
-    { value: "belum lunas", label: "Belum Lunas" },
-  ];
+  // const statusPembayaranOptions = [
+  //   { value: "lunas", label: "Lunas" },
+  //   { value: "belum lunas", label: "Belum Lunas" },
+  // ];
 
   // Fungsi untuk mengatur harga satuan berdasarkan produk yang dipilih
   const setUnitPrice = (index, kodebarang) => {
@@ -296,6 +343,7 @@ const TransactionForm = () => {
                                     field.onChange(option.value)
                                   }
                                   className="mt-1 block w-full border-gray-300 bg-white rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                  isDisabled={isItemsFinalized}
                                 />
                               );
                             }}
@@ -325,6 +373,7 @@ const TransactionForm = () => {
                           type="date"
                           onChange={onChange}
                           value={value ?? ""} // Ensure value is never undefined
+                          readOnly={isItemsFinalized}
                         />
                       )}
                     />
@@ -374,6 +423,7 @@ const TransactionForm = () => {
                             placeholder="Status Pembayaran"
                             {...field}
                             value={field.value || ""}
+                            readOnly={isItemsFinalized}
                           />
                         </FormControl>
                         <FormDescription>
@@ -438,6 +488,7 @@ const TransactionForm = () => {
                                             field.onChange(option.value);
                                             setUnitPrice(index, option.value);
                                           }}
+                                          isDisabled={isItemsFinalized}
                                         />
                                       );
                                     }}
@@ -457,6 +508,7 @@ const TransactionForm = () => {
                                   <Input
                                     type="number"
                                     placeholder="1"
+                                    readOnly={isItemsFinalized}
                                     {...field}
                                   />
                                 </FormControl>
@@ -464,36 +516,100 @@ const TransactionForm = () => {
                             )}
                           />
                         </td>
-                        <td className="px-2 py-2 whitespace-nowrap">
+                        <td className="px-2 py-2 whitespace-nowrap relative">
                           <FormField
                             control={form.control}
                             name={`items[${index}].quantity`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormControl>
-                                  <Input
-                                    type="number"
-                                    placeholder="1"
-                                    {...field}
-                                  />
-                                </FormControl>
-                              </FormItem>
+                            rules={{
+                              validate: {
+                                lessThanStock: (value) => {
+                                  const product = dataProduk.find(
+                                    (p) =>
+                                      p.kodebarang === items[index].productName
+                                  );
+                                  if (product && +value > product.stok_barang) {
+                                    return `Maksimal stok yang tersedia adalah ${product.stok_barang}`;
+                                  }
+                                  return true;
+                                },
+                              },
+                            }}
+                            render={({ field, fieldState: { error } }) => (
+                              <>
+                                <Input
+                                  type="number"
+                                  placeholder="0"
+                                  {...field}
+                                  readOnly={isItemsFinalized}
+                                  onChange={(e) => {
+                                    const product = dataProduk.find(
+                                      (p) =>
+                                        p.kodebarang ===
+                                        items[index].productName
+                                    );
+                                    let value = parseInt(e.target.value, 10);
+                                    // Jika nilai yang diinput lebih besar dari stok_barang, set nilai dengan stok_barang
+                                    if (
+                                      product &&
+                                      value > product.stok_barang
+                                    ) {
+                                      value = product.stok_barang;
+                                      toast.error(
+                                        `Maksimal stok yang tersedia untuk ${product.nama_barang} adalah ${product.stok_barang}`
+                                      );
+                                    }
+                                    // Pastikan nilai tidak negatif
+                                    value = value < 0 ? 0 : value;
+                                    field.onChange(value);
+                                  }}
+                                />
+                                {dataProduk && (
+                                  <p className="text-[10px] absolute top-0 right-0 bg-slate-100 rounded-full">
+                                    Jumlah stok tersedia{" "}
+                                    {
+                                      dataProduk.find(
+                                        (p) =>
+                                          p.kodebarang ===
+                                          items[index].productName
+                                      )?.stok_barang
+                                    }
+                                  </p>
+                                )}
+                                {/* {dataProduk && (
+                                  <progress
+                                    value={field.value}
+                                    max={
+                                      dataProduk.find(
+                                        (p) =>
+                                          p.kodebarang ===
+                                          items[index].productName
+                                      )?.stok_barang
+                                    }
+                                  ></progress>
+                                )} */}
+
+                                {/* {error && (
+                                  <p className="text-red-500">
+                                    {error.message}
+                                  </p>
+                                )} */}
+                              </>
                             )}
                           />
                         </td>
 
-                        <td className="px-2 py-2 whitespace-nowrap text-center font-bold">
+                        <td className="px-2 py-2 whitespace-nowrap ">
                           <Controller
                             control={control}
                             name={`items[${index}].total`}
                             render={({ field }) => (
-                              <span>{field.value}</span> // Format angka ke bentuk lokal
+                              <span className="text-sm text-center font-semibold">
+                                {field.value}
+                              </span> // Format angka ke bentuk lokal
                             )}
                           />
                         </td>
-                        {/* <td className="px-2 py-2 whitespace-nowrap text-center font-bold">
-                          {item.total.toLocaleString()}
-                        </td> */}
+
                         {!isItemsFinalized && (
                           <td>
                             <button
@@ -510,6 +626,7 @@ const TransactionForm = () => {
                 </table>
                 {!isItemsFinalized && (
                   <button
+                    type="button"
                     className="py-2 mx-4 px-4 border text-blue-500 border-blue-600 font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none"
                     onClick={addItem}
                   >
@@ -519,6 +636,7 @@ const TransactionForm = () => {
 
                 {!isItemsFinalized && (
                   <button
+                    type="button"
                     className="py-2 mx-4 px-4 border text-green-500 border-green-600 font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none"
                     onClick={finalizeItems}
                   >
@@ -565,4 +683,4 @@ const TransactionForm = () => {
   );
 };
 
-export default TransactionForm;
+export default TambahPenjualan;

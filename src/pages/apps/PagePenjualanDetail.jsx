@@ -43,23 +43,27 @@ import { useForm, Controller } from "react-hook-form";
 
 import { useNavigate, Link, useParams } from "react-router-dom";
 
-// async function fetchingIDsDetailPenjualan(id) {
-//   const { data, error } = await supabase
-//     .from("detailpenjualan")
-//     .select("*")
-//     .eq("iddetailpenjualan", id); // Menambahkan filter berdasarkan ID
-
-//   if (error) {
-//     throw new Error("Could not fetch transaksi_penjualan");
-//   }
-//   return data;
-// }
-
-async function fetchingDetailPenjualan(id) {
+async function fetchingDetailPenjualan(idtransaksi) {
   const { data, error } = await supabase
     .from("transaksi_penjualan")
-    .select("*")
-    .eq("idtransaksi", id); // Menambahkan filter berdasarkan ID
+    .select(
+      `
+    idtransaksi,
+    totalitem,
+    totalharga,
+    penjualan_produk (
+      jumlah_barang,
+      harga_per_item,
+      master_barang (
+        kodebarang,
+        nama_barang,
+        stok_barang,
+        harga_jual
+      )
+    )
+  `
+    )
+    .eq("idtransaksi", idtransaksi);
 
   if (error) {
     throw new Error("Could not fetch transaksi_penjualan");
