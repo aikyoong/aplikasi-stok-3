@@ -109,36 +109,37 @@ async function deleteTransaksi(IDTransaksi) {
   console.log("Status", status);
 }
 
-async function fetchingDetailPenjualan() {
-  const { data, error } = await supabase
-    .from("transaksi_penjualan")
-    .select(
-      `
-        idtransaksi,
-        totalitem,
-        totalharga,
-        penjualan_produk (
-          harga_per_item,
-          jumlah_barang,
-            master_barang (
-              kodebarang,
-              nama_barang,
-              stok_barang,
-              harga_jual
-          )
-        )
-      `
-    )
-    .eq("idtransaksi", 125);
+// async function fetchingDetailPenjualan() {
+//   const { data, error } = await supabase
+//     .from("transaksi_penjualan")
+//     .select(
+//       `
+//         idtransaksi,
+//         totalitem,
+//         totalharga,
+//         penjualan_produk (
+//           harga_per_item,
+//           jumlah_barang,
+//             master_barang (
+//               kodebarang,
+//               nama_barang,
+//               stok_barang,
+//               harga_jual
+//           )
+//         )
+//       `
+//     )
+//     .eq("idtransaksi", 125);
 
-  if (error) {
-    console.error("Could not fetch transaksi_penjualan", error);
-    throw error;
-  }
-  return data;
-}
+//   if (error) {
+//     console.error("Could not fetch transaksi_penjualan", error);
+//     throw error;
+//   }
+//   return data;
+// }
 
 // HEADER + POPUP
+
 const HeaderPageAndAddProduct = ({ data, namaHalaman, desc }) => {
   return (
     <div className="sm:flex sm:items-center mx-5 md:mx-0 sm:justify-between mt-12">
@@ -174,12 +175,12 @@ function Penjualan() {
     queryKey: ["semua_penjualan"],
     queryFn: fetchSemuaTransaksiPenjualan,
   });
-  const { data: datasss, error: fetchError3 } = useQuery({
-    queryKey: ["penjualanbyid", 125],
-    queryFn: fetchingDetailPenjualan,
-  });
+  // const { data: datasss, error: fetchError3 } = useQuery({
+  //   queryKey: ["penjualanbyid", 125],
+  //   queryFn: fetchingDetailPenjualan,
+  // });
 
-  console.log("datass", datasss);
+  // console.log("datass", datasss);
 
   // Searching
   const [searching, setSearching] = useState("");
@@ -285,7 +286,6 @@ function Penjualan() {
 
   return (
     <Layout>
-      {/* <p>{fetchError && `${fetchError}`}</p> */}
       {dataTransaksi && (
         <div className="max-w-5xl mx-auto">
           <HeaderPageAndAddProduct

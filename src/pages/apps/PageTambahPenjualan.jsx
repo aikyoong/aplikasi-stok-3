@@ -1,27 +1,7 @@
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarSeparator,
-  MenubarShortcut,
-  MenubarTrigger,
-} from "@/components/ui/menubar";
 import {
   Form,
   FormControl,
@@ -34,15 +14,10 @@ import {
 
 import Select from "react-select";
 import supabase from "@/config/supabaseClient";
-import { useState, useMemo, useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { RefreshCw, ListPlus } from "lucide-react";
-import { motion } from "framer-motion";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
-
 import toast from "react-hot-toast";
-import * as z from "zod";
 
 // FUNCTIONS FETCHING
 async function fetchKonsumen() {
