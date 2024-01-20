@@ -74,8 +74,8 @@ async function addTransaksi(
     .insert([
       { idkonsumen, tanggaltransaksi, totalitem, totalharga, statuspembayaran },
     ])
-    .single();
-  // .select();
+    .single()
+    .select();
   // .returning("idtransaksi"); // Mengambil nilai id dari baris yang baru saja ditambahkan
 
   console.log("Response from Supabase:", data, error, status);
@@ -118,18 +118,16 @@ async function addTransaksi(
 //   }
 // }
 
-async function addItemTransaksi(idtransaksi, items) {
-  const itemsToInsert = items.map((item) => ({
-    idtransaksi,
-    kodebarang: item.kodebarang,
-    jumlah_barang: item.quantity,
-    harga_per_item: item.unitPrice,
-    // tambahkan kolum tambahan jika ada
-  }));
+async function addItemTransaksi(items) {
+  // const itemsToInsert = items.map((item) => ({
+  //   idtransaksi,
+  //   kodebarang: item.kodebarang,
+  //   jumlah_barang: item.quantity,
+  //   harga_per_item: item.unitPrice,
+  //   // tambahkan kolum tambahan jika ada
+  // }));
 
-  const { data, error } = await supabase
-    .from("penjualan_produk")
-    .insert(itemsToInsert);
+  const { data, error } = await supabase.from("penjualan_produk").insert(items);
 
   if (error) {
     console.error("Error adding items:", error);
@@ -200,8 +198,8 @@ const TambahPenjualan = () => {
   };
 
   function onSubmit(values) {
-    console.log("values", values);
-    console.log("values", values.items);
+    console.log("values :", values);
+    console.log("values.items :", values.items);
 
     const totalBarang = totalQuantity;
     const totalHarga = totalPrice;
@@ -215,32 +213,26 @@ const TambahPenjualan = () => {
       statuspembayaran
     ).then(async (idtransaksi) => {
       if (idtransaksi) {
-        // const detailItems = items.map((item) => ({
-        //   idtransaksipenjualan: idtransaksi,
-        //   kodebarang: item.productName,
-        //   jumlah: item.quantity,
-        //   hargasatuan: item.unitPrice,
-        // }));
-
-        // Ubah struktur items untuk sesuai dengan tabel penjualan_produk
-        const itemsFormatted = values.items.map((item) => ({
-          kodebarang: item.kodebarang, // Pastikan ini adalah kode barang
+        // struktur items untuk sesuai dengan tabel penjualan_produk
+        const itemsFormatted = values?.items.map((item) => ({
+          idtransaksi,
+          kodebarang: item.productName, // Pastikan ini adalah kode barang
           jumlah_barang: item.quantity,
           harga_per_item: item.unitPrice,
         }));
 
-        // console.log("Transaksi ID:", idtransaksi);
-        // addItemTransaksi(detailItems);
+        console.log("Transaksi ID:", idtransaksi);
+        console.log("itemsFormatted:", itemsFormatted);
 
         // Tunggu sampai semua item transaksi berhasil ditambahkan
-        const success = await addItemTransaksi(idtransaksi, itemsFormatted);
-        if (success) {
-          toast.success(`Transaksi dan detail produk berhasil ditambahkan.`);
-          // Lakukan tindakan selanjutnya, seperti reset form atau redirect
-        } else {
-          toast.error(`Gagal menambahkan detail produk ke transaksi.`);
-          // Lakukan tindakan untuk menangani error
-        }
+        // const success = await addItemTransaksi(itemsFormatted);
+        // if (success) {
+        //   toast.success(`Transaksi dan detail produk berhasil ditambahkan.`);
+        //   // Lakukan tindakan selanjutnya, seperti reset form atau redirect
+        // } else {
+        //   toast.error(`Gagal menambahkan detail produk ke transaksi.`);
+        //   // Lakukan tindakan untuk menangani error
+        // }
       } else {
         toast.error(`Gagal membuat transaksi.`);
         // Lakukan tindakan untuk menangani error
@@ -258,7 +250,7 @@ const TambahPenjualan = () => {
     queryFn: fetchMasterBarang,
   });
 
-  console.log("dataProduk", dataProduk);
+  // console.log("dataProduk", dataProduk);
 
   const konsumenOption = konsumenData?.map((konsumen) => ({
     value: konsumen.idkonsumen,

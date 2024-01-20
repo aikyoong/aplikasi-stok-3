@@ -59,70 +59,13 @@ const fetchSemuaTransaksiPenjualan = async () => {
   return data;
 };
 
-// async function fetchingDetailPenjualan() {
-//   const { data, error } = await supabase
-//     .from("transaksi_penjualan")
-//     .select(
-//       `idtransaksi,
-//       totalitem,
-//       totalharga,
-//       penjualan_produk (
-//         jumlah_barang,
-//         harga_per_item,
-//         master_barang (
-//           kodebarang,
-//           nama_barang,
-//           stok_barang,
-//           harga_jual
-//         )
-//       )
-//     `
-//     )
-//     .eq("idtransaksi", 110);
-
-//   if (error) {
-//     throw new Error("Could not fetch transaksi_penjualan");
-//   }
-//   return data;
-// }
-
-//   jumlah_barang, harga_per_item,
-
-async function fetchingDetailPenjualan() {
-  const { data, error } = await supabase
-    .from("transaksi_penjualan")
-    .select(
-      `
-        idtransaksi,
-        totalitem,
-        totalharga,
-        penjualan_produk (
-        
-          master_barang (
-            kodebarang,
-            nama_barang,
-            stok_barang,
-            harga_jual
-          )
-        )
-      `
-    )
-    .eq("idtransaksi", 110);
-
-  if (error) {
-    console.error("Could not fetch transaksi_penjualan", error);
-    throw error;
-  }
-  return data;
-}
-
 async function deleteTransaksi(IDTransaksi) {
   const { data, error, status, statusText } = await supabase
     .from("transaksi_penjualan") // Menggunakan tabel master_barang
     .delete()
     .match({ idtransaksi: IDTransaksi }); // Menghapus baris berdasarkan kodebarang
 
-  if (error.code === "23503") {
+  if (error?.code === "23503") {
     toast.custom((t) => (
       <div
         className={`${
@@ -166,6 +109,35 @@ async function deleteTransaksi(IDTransaksi) {
   console.log("Status", status);
 }
 
+async function fetchingDetailPenjualan() {
+  const { data, error } = await supabase
+    .from("transaksi_penjualan")
+    .select(
+      `
+        idtransaksi,
+        totalitem,
+        totalharga,
+        penjualan_produk (
+          harga_per_item,
+          jumlah_barang,
+            master_barang (
+              kodebarang,
+              nama_barang,
+              stok_barang,
+              harga_jual
+          )
+        )
+      `
+    )
+    .eq("idtransaksi", 125);
+
+  if (error) {
+    console.error("Could not fetch transaksi_penjualan", error);
+    throw error;
+  }
+  return data;
+}
+
 // HEADER + POPUP
 const HeaderPageAndAddProduct = ({ data, namaHalaman, desc }) => {
   return (
@@ -185,15 +157,12 @@ const HeaderPageAndAddProduct = ({ data, namaHalaman, desc }) => {
       </div>
 
       <div className="flex items-center mt-4 gap-x-3">
-        <button className="px-5 py-2 text-sm tracking-wide text-white mb-6  transition-colors duration-200  bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
-          <Link
-            to="/tambah-penjualan"
-            className="flex items-center justify-center"
-          >
+        <Link to="/tambah-penjualan">
+          <button className="flex items-center justify-center px-5 py-2 text-sm tracking-wide text-white mb-6  transition-colors duration-200  bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
             <ListPlus />
             <span>Tambah Transaksi</span>
-          </Link>
-        </button>
+          </button>
+        </Link>
       </div>
     </div>
   );
@@ -205,12 +174,12 @@ function Penjualan() {
     queryKey: ["semua_penjualan"],
     queryFn: fetchSemuaTransaksiPenjualan,
   });
-  const { data: dataPerIDTransaksi, error: fetchError3 } = useQuery({
-    queryKey: ["peridtransaksi"],
+  const { data: datasss, error: fetchError3 } = useQuery({
+    queryKey: ["penjualanbyid", 125],
     queryFn: fetchingDetailPenjualan,
   });
 
-  console.log("dataPerIDTransaksi", dataPerIDTransaksi);
+  console.log("datass", datasss);
 
   // Searching
   const [searching, setSearching] = useState("");
@@ -294,7 +263,7 @@ function Penjualan() {
                   </div>
                 </MenubarTrigger>
                 <MenubarContent>
-                  <Link to={`/penjualan/${IDTransaksiEachRow}`}>
+                  <Link to={`/transaksi-penjualan/${IDTransaksiEachRow}`}>
                     <MenubarItem>Lihat Detail</MenubarItem>
                   </Link>
                   <MenubarItem

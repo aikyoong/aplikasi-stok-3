@@ -72,7 +72,7 @@ const router = createBrowserRouter([
     element: <TambahPenjualan />,
   },
   {
-    path: "/penjualan/:idtransaksi",
+    path: "/transaksi-penjualan/:idtransaksi",
     loader: authLoader,
     element: <PagePenjualanDetail />,
   },
