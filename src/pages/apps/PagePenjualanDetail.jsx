@@ -85,35 +85,6 @@ async function fetchingKonsumenByID(id) {
   return data;
 }
 
-// async function fetchingDetailPenjualan() {
-//   const { data, error } = await supabase
-//     .from("transaksi_penjualan")
-//     .select(
-//       `
-//         idtransaksi,
-//         totalitem,
-//         totalharga,
-//         penjualan_produk (
-//         harga_per_item
-//         jumlah_barang
-//           master_barang (
-//             kodebarang,
-//             nama_barang,
-//             stok_barang,
-//             harga_jual
-//           )
-//         )
-//       `
-//     )
-//     .eq("idtransaksi", 110);
-
-//   if (error) {
-//     console.error("Could not fetch transaksi_penjualan", error);
-//     throw error;
-//   }
-//   return data;
-// }
-
 function PagePenjualanDetail() {
   // const navigate = useNavigate();
   const { idtransaksi } = useParams();
@@ -163,51 +134,7 @@ function PagePenjualanDetail() {
 
   return (
     <Layout>
-      {/* {DetailPenjualan && Konsumen && (
-        <div className="max-w-5xl mx-auto mt-12">
-          <div className="mb-4">
-            <h2>ID Transaksi : {DetailPenjualan[0]?.idtransaksi}</h2>
-            <h2>Konsumen : {Konsumen[0]?.nama_konsumen}</h2>
-            <h2>Total Harga : {DetailPenjualan[0]?.totalharga}</h2>
-            <h2>Total Item : {DetailPenjualan[0]?.totalitem}</h2>
-            <h2>Status Pembayaran : {DetailPenjualan[0]?.statuspembayaran}</h2>
-          </div>
-          {DetailPenjualan[0]?.penjualan_produk[0] && (
-            <>
-              <h3 className="font-semibold">Detail Produk:</h3>
-              <p>
-                Kode Barang:{" "}
-                {
-                  DetailPenjualan[0]?.penjualan_produk[0]?.master_barang
-                    .kodebarang
-                }
-              </p>
-              <p>
-                Nama Barang:{" "}
-                {
-                  DetailPenjualan[0]?.penjualan_produk[0]?.master_barang
-                    .nama_barang
-                }
-              </p>
-              <p>
-                Stok Barang:{" "}
-                {
-                  DetailPenjualan[0]?.penjualan_produk[0]?.master_barang
-                    .stok_barang
-                }
-              </p>
-              <p>
-                Harga Jual:{" "}
-                {
-                  DetailPenjualan[0]?.penjualan_produk[0]?.master_barang
-                    .harga_jual
-                }
-              </p>
-            </>
-          )}
-        </div>
-      )} */}
-      {DetailPenjualan && DetailPenjualan.length > 0 && (
+      {DetailPenjualan && DetailPenjualan.length > 0 && Konsumen && (
         <div className="max-w-5xl mx-auto mt-12">
           <div className="mb-4">
             <h2>ID Transaksi: {DetailPenjualan[0]?.idtransaksi}</h2>

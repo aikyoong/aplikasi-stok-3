@@ -76,9 +76,6 @@ async function addTransaksi(
     ])
     .single()
     .select();
-  // .returning("idtransaksi"); // Mengambil nilai id dari baris yang baru saja ditambahkan
-
-  console.log("Response from Supabase:", data, error, status);
 
   if (error) {
     console.error("Error adding data:", error);
@@ -86,47 +83,10 @@ async function addTransaksi(
     return null;
   }
 
-  if (status === 201) {
-    toast.success(`Berhasil menambahkan transaksi`);
-  } else {
-    toast.error(`Gagal menambahkan transaksi`);
-  }
-
   return data.idtransaksi; // Mengembalikan idtransaksi dari transaksi yang baru ditambahkan
 }
 
-// LAMA
-// async function addItemTransaksi(array) {
-//   const { data, error, status } = await supabase
-//     .from("detailpenjualan")
-//     .insert(array)
-//     .select();
-//   // .returning("idtransaksi"); // Mengambil nilai id dari baris yang baru saja ditambahkan
-
-//   console.log("Response from Supabase:", data, error, status);
-
-//   if (error) {
-//     console.error("Error adding data:", error);
-//     return null; // Kembalikan null jika ada error
-//   }
-
-//   if (status === 201) {
-//     toast.success(`Berhasil menambahkan item kedalam transaksi`);
-//   } else {
-//     toast.error(`Maaf ada kesalahan ketika menambahkan item transaksi`);
-//     return null; // Kembalikan null jika ada error
-//   }
-// }
-
 async function addItemTransaksi(items) {
-  // const itemsToInsert = items.map((item) => ({
-  //   idtransaksi,
-  //   kodebarang: item.kodebarang,
-  //   jumlah_barang: item.quantity,
-  //   harga_per_item: item.unitPrice,
-  //   // tambahkan kolum tambahan jika ada
-  // }));
-
   const { data, error } = await supabase.from("penjualan_produk").insert(items);
 
   if (error) {
@@ -135,12 +95,12 @@ async function addItemTransaksi(items) {
     return false;
   }
 
-  // toast.success(`Berhasil menambahkan item kedalam transaksi`);
-  console.log("Item added:", data);
   return data;
 }
 
 const TambahPenjualan = () => {
+  const [transactionCompleted, setTransactionCompleted] = useState(false);
+
   const form = useForm({
     defaultValues: {
       statuspembayaran: "",
@@ -197,9 +157,26 @@ const TambahPenjualan = () => {
     setIsItemsFinalized(true);
   };
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const isSubmitEnabled = () => {
+    const idkonsumen = form.watch("idkonsumen");
+    const tanggaltransaksi = form.watch("tanggaltransaksi");
+    const statuspembayaran = form.watch("statuspembayaran");
+
+    return (
+      idkonsumen &&
+      tanggaltransaksi &&
+      statuspembayaran &&
+      isItemsFinalized &&
+      items.length > 0 &&
+      !isSubmitting
+    );
+  };
+
   function onSubmit(values) {
-    console.log("values :", values);
-    console.log("values.items :", values.items);
+    if (isSubmitting) return; // Jika sudah dalam proses submit, hentikan fungsi
+    setIsSubmitting(true); // Mulai proses submit
 
     const totalBarang = totalQuantity;
     const totalHarga = totalPrice;
@@ -211,33 +188,41 @@ const TambahPenjualan = () => {
       totalBarang,
       totalHarga,
       statuspembayaran
-    ).then(async (idtransaksi) => {
-      if (idtransaksi) {
-        // struktur items untuk sesuai dengan tabel penjualan_produk
-        const itemsFormatted = values?.items.map((item) => ({
-          idtransaksi,
-          kodebarang: item.productName, // Pastikan ini adalah kode barang
-          jumlah_barang: item.quantity,
-          harga_per_item: item.unitPrice,
-        }));
+    )
+      .then(async (idtransaksi) => {
+        if (idtransaksi) {
+          // struktur items untuk sesuai dengan tabel penjualan_produk
+          const itemsFormatted = values?.items.map((item) => ({
+            idtransaksi,
+            kodebarang: item.productName, // Pastikan ini adalah kode barang
+            jumlah_barang: item.quantity,
+            harga_per_item: item.unitPrice,
+          }));
 
-        console.log("Transaksi ID:", idtransaksi);
-        console.log("itemsFormatted:", itemsFormatted);
+          // console.log("Transaksi ID:", idtransaksi);
+          // console.log("itemsFormatted:", itemsFormatted);
 
-        // Tunggu sampai semua item transaksi berhasil ditambahkan
-        // const success = await addItemTransaksi(itemsFormatted);
-        // if (success) {
-        //   toast.success(`Transaksi dan detail produk berhasil ditambahkan.`);
-        //   // Lakukan tindakan selanjutnya, seperti reset form atau redirect
-        // } else {
-        //   toast.error(`Gagal menambahkan detail produk ke transaksi.`);
-        //   // Lakukan tindakan untuk menangani error
-        // }
-      } else {
-        toast.error(`Gagal membuat transaksi.`);
-        // Lakukan tindakan untuk menangani error
-      }
-    });
+          // Tunggu sampai semua item transaksi berhasil ditambahkan
+          const stats = await addItemTransaksi(itemsFormatted);
+          if (stats) {
+            setTransactionCompleted(true); // Transaksi error, sembunyikan tombol
+            toast.error(`Gagal menambahkan detail produk ke transaksi.`);
+          } else {
+            setTransactionCompleted(true); // Transaksi berhasil, sembunyikan tombol
+            toast.success(`Transaksi dan detail produk berhasil ditambahkan.`);
+          }
+          setIsSubmitting(false); // Setelah selesai, set kembali isSubmitting menjadi false
+        } else {
+          toast.error(`Gagal membuat transaksi.`);
+          // Lakukan tindakan untuk menangani error
+        }
+      })
+      .catch(() => {
+        setIsSubmitting(false); // Juga set kembali isSubmitting menjadi false jika terjadi error
+      })
+      .finally(() => {
+        setIsSubmitting(false); // Proses selesai, setel isSubmitting kembali ke false
+      });
   }
 
   const { data: konsumenData, error: fetchError2 } = useQuery({
@@ -279,20 +264,7 @@ const TambahPenjualan = () => {
     }
   };
 
-  const isSubmitEnabled = () => {
-    const idkonsumen = form.watch("idkonsumen");
-    const tanggaltransaksi = form.watch("tanggaltransaksi");
-    const statuspembayaran = form.watch("statuspembayaran");
-
-    // Memeriksa apakah semua syarat terpenuhi termasuk item telah ditetapkan
-    return (
-      idkonsumen &&
-      tanggaltransaksi &&
-      statuspembayaran &&
-      isItemsFinalized &&
-      items.length > 0 // Pastikan ada setidaknya satu item
-    );
-  };
+  //
 
   return (
     <Layout>
@@ -660,13 +632,15 @@ const TambahPenjualan = () => {
 
             {/* Submit Button */}
             <div className="flex justify-end">
-              <Button
-                type="submit"
-                className="mt-4 py-6"
-                disabled={!isSubmitEnabled()}
-              >
-                Buat Transaksi
-              </Button>
+              {!transactionCompleted && (
+                <Button
+                  type="submit"
+                  className="mt-4 py-6"
+                  disabled={!isSubmitEnabled() || isSubmitting}
+                >
+                  Buat Transaksi
+                </Button>
+              )}
             </div>
           </form>
         </Form>
