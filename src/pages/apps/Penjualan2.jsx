@@ -1,17 +1,5 @@
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import V8TableContainer from "@/components/Table/V8TableContainer";
 import SearchAndFiltering from "@/components/aikyong_pages/Search";
 import {
@@ -33,16 +21,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import Select from "react-select";
 import supabase from "@/config/supabaseClient";
 import { useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { RefreshCw, ListPlus } from "lucide-react";
-import { motion } from "framer-motion";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, Controller } from "react-hook-form";
+
 import toast from "react-hot-toast";
-import * as z from "zod";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 import { Link } from "react-router-dom";
 
@@ -109,36 +95,43 @@ async function deleteTransaksi(IDTransaksi) {
   console.log("Status", status);
 }
 
-// async function fetchingDetailPenjualan() {
-//   const { data, error } = await supabase
-//     .from("transaksi_penjualan")
-//     .select(
-//       `
-//         idtransaksi,
-//         totalitem,
-//         totalharga,
-//         penjualan_produk (
-//           harga_per_item,
-//           jumlah_barang,
-//             master_barang (
-//               kodebarang,
-//               nama_barang,
-//               stok_barang,
-//               harga_jual
-//           )
-//         )
-//       `
-//     )
-//     .eq("idtransaksi", 125);
+// Fungsi untuk mengkonversi data transaksi ke format AutoTable
+const exportToPDF = (dataTransaksi) => {
+  // Membuat instance jsPDF
+  const doc = new jsPDF();
 
-//   if (error) {
-//     console.error("Could not fetch transaksi_penjualan", error);
-//     throw error;
-//   }
-//   return data;
-// }
+  // Membuat header tabel
+  const tableColumn = [
+    "ID Transaksi",
+    "ID Konsumen",
+    "Total Item",
+    "Total Harga",
+    "Tanggal Transaksi",
+    "Status Pembayaran",
+  ];
 
-// HEADER + POPUP
+  // Mengubah data transaksi menjadi array of array
+  const tableRows = dataTransaksi.map((transaksi) => [
+    transaksi.idtransaksi,
+    transaksi.idkonsumen,
+    transaksi.totalitem,
+    transaksi.totalharga,
+    new Date(transaksi.tanggaltransaksi).toLocaleDateString("id-ID"),
+    transaksi.statuspembayaran,
+  ]);
+
+  // Menambahkan AutoTable ke dokument
+  autoTable(doc, {
+    head: [tableColumn],
+    body: tableRows,
+    startY: 20,
+    theme: "striped",
+    styles: { fontSize: 8 },
+  });
+
+  // Membuka PDF di tab baru
+  doc.output("dataurlnewwindow");
+};
 
 const HeaderPageAndAddProduct = ({ data, namaHalaman, desc }) => {
   return (
@@ -157,12 +150,15 @@ const HeaderPageAndAddProduct = ({ data, namaHalaman, desc }) => {
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-300">{desc}</p>
       </div>
 
-      <div className="flex items-center mt-4 gap-x-3">
+      <div className="flex items-center  gap-x-3">
+        <Button variant="outline" onClick={() => exportToPDF(data)}>
+          Download PDF
+        </Button>
         <Link to="/tambah-penjualan">
-          <button className="flex items-center justify-center px-5 py-2 text-sm tracking-wide text-white mb-6  transition-colors duration-200  bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
+          <Button onClick={() => exportToPDF(data)}>
             <ListPlus />
-            <span>Tambah Transaksi</span>
-          </button>
+            Tambah Transaksi
+          </Button>
         </Link>
       </div>
     </div>
@@ -175,12 +171,6 @@ function Penjualan() {
     queryKey: ["semua_penjualan"],
     queryFn: fetchSemuaTransaksiPenjualan,
   });
-  // const { data: datasss, error: fetchError3 } = useQuery({
-  //   queryKey: ["penjualanbyid", 125],
-  //   queryFn: fetchingDetailPenjualan,
-  // });
-
-  // console.log("datass", datasss);
 
   // Searching
   const [searching, setSearching] = useState("");
