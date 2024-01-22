@@ -141,7 +141,6 @@ const HeaderPageAndAddProduct = ({ data, namaHalaman, desc }) => {
           <h2 className="text-lg font-medium text-gray-800 dark:text-white capitalize">
             {namaHalaman}
           </h2>
-
           <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">
             {data.length} penjualan
           </span>
@@ -150,12 +149,12 @@ const HeaderPageAndAddProduct = ({ data, namaHalaman, desc }) => {
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-300">{desc}</p>
       </div>
 
-      <div className="flex items-center  gap-x-3">
+      <div className="flex items-center gap-x-3">
         <Button variant="outline" onClick={() => exportToPDF(data)}>
           Download PDF
         </Button>
         <Link to="/tambah-penjualan">
-          <Button onClick={() => exportToPDF(data)}>
+          <Button >
             <ListPlus />
             Tambah Transaksi
           </Button>
