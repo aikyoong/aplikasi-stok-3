@@ -145,7 +145,6 @@ const HeaderPageAndAddProduct = ({ data, namaHalaman, desc }) => {
             {data.length} penjualan
           </span>
         </div>
-
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-300">{desc}</p>
       </div>
 
@@ -154,7 +153,7 @@ const HeaderPageAndAddProduct = ({ data, namaHalaman, desc }) => {
           Download PDF
         </Button>
         <Link to="/tambah-penjualan">
-          <Button >
+          <Button>
             <ListPlus />
             Tambah Transaksi
           </Button>

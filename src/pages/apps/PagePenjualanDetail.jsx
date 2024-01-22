@@ -42,6 +42,46 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 
 import { useNavigate, Link, useParams } from "react-router-dom";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
+const exportDetailPenjualanToPDF = (DetailPenjualan) => {
+  const doc = new jsPDF();
+
+  DetailPenjualan.forEach((transaksi, index) => {
+    if (index > 0) {
+      doc.addPage();
+    }
+
+    doc.setFontSize(10); // Mengatur ukuran font kecil
+    doc.text(`ID Transaksi: ${transaksi.idtransaksi}`, 10, 10);
+    doc.text(`Total Harga: ${transaksi.totalharga}`, 10, 20);
+    doc.text(`Total Item: ${transaksi.totalitem}`, 10, 30);
+
+    const tableColumn = [
+      "Kode Barang",
+      "Nama Barang",
+      "Jumlah Barang",
+      "Harga Per Item",
+    ];
+    const tableRows = transaksi.penjualan_produk.map((produk) => [
+      produk.master_barang.kodebarang,
+      produk.master_barang.nama_barang,
+      produk.jumlah_barang,
+      produk.harga_per_item,
+    ]);
+
+    autoTable(doc, {
+      startY: 40,
+      head: [tableColumn],
+      body: tableRows,
+      theme: "striped",
+      styles: { fontSize: 8 },
+    });
+  });
+
+  doc.output("dataurlnewwindow");
+};
 
 async function fetchingDetailPenjualan(idtransaksi) {
   const { data, error } = await supabase
@@ -132,10 +172,22 @@ function PagePenjualanDetail() {
   //   return `${tahun}-${bulan}-${hari}`;
   // }
 
+  const formatRupiah = (angka) => {
+    // Mengubah angka menjadi string dan memformatnya sesuai format Rupiah
+    return `Rp. ${angka.toLocaleString("id-ID")}`;
+  };
+
   return (
     <Layout>
       {DetailPenjualan && DetailPenjualan.length > 0 && Konsumen && (
         <div className="max-w-5xl mx-auto mt-12">
+          <Button
+            onClick={() => exportDetailPenjualanToPDF(DetailPenjualan)}
+            className="mb-4"
+          >
+            {" "}
+            Ekspor ke PDF
+          </Button>
           <div className="mb-4">
             <h2>ID Transaksi: {DetailPenjualan[0]?.idtransaksi}</h2>
             <h2>Konsumen: {Konsumen[0]?.nama_konsumen}</h2>{" "}
@@ -148,15 +200,45 @@ function PagePenjualanDetail() {
             DetailPenjualan[0].penjualan_produk.length > 0 && (
               <>
                 <h3 className="font-semibold mb-3">Detail Produk:</h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 mb-4">
                   {DetailPenjualan[0].penjualan_produk.map((produk, index) => (
                     <div key={index}>
-                      <p>Kode Barang: {produk.master_barang?.kodebarang}</p>
-                      <p>Nama Barang: {produk.master_barang?.nama_barang}</p>
-                      <p>Stok Barang: {produk.master_barang?.stok_barang}</p>
-                      <p>Harga Jual: {produk.master_barang?.harga_jual}</p>
-                      <p>Jumlah Barang: {produk?.jumlah_barang}</p>
-                      <p>Harga Per Item: {produk?.harga_per_item}</p>
+                      <p>
+                        Kode Barang:{" "}
+                        <span className="font-semibold">
+                          {produk.master_barang?.kodebarang}
+                        </span>
+                      </p>
+                      <p>
+                        Nama Barang:{" "}
+                        <span className="font-semibold">
+                          {produk.master_barang?.nama_barang}
+                        </span>
+                      </p>
+                      <p>
+                        Stok Barang:{" "}
+                        <span className="font-semibold">
+                          {produk.master_barang?.stok_barang}
+                        </span>
+                      </p>
+                      <p>
+                        Harga Jual:{" "}
+                        <span className="font-semibold">
+                          {formatRupiah(produk.master_barang?.harga_jual)}
+                        </span>
+                      </p>
+                      <p>
+                        Jumlah Barang:
+                        <span className="font-semibold">
+                          {produk?.jumlah_barang}
+                        </span>
+                      </p>
+                      <p>
+                        Harga Per Item:{" "}
+                        <span className="font-semibold">
+                          {formatRupiah(produk?.harga_per_item)}
+                        </span>
+                      </p>
                     </div>
                   ))}
                 </div>
